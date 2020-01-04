@@ -48,7 +48,9 @@ public:
 		RADAR_SUN=1,
 		VISIBLE=2,
 		RADAR_NIGHT=3,
-		NOT_VISIBLE=4
+		NOT_VISIBLE=4,
+		PENUMBRAL = 5,
+		ANNULAR = 6
 	};
         gSatWrapper(QString designation, QString tle1,QString tle2);
         ~gSatWrapper();
@@ -114,6 +116,7 @@ public:
         //!   Fundamentals of Astrodynamis and Applications (Third Edition) pg 898
         //!   David A. Vallado
 	Visibility getVisibilityPredict() const;
+	Visibility getVisibilityPredict2() const;
 
 	double getPhaseAngle() const;
 	//! Get orbital period in minutes

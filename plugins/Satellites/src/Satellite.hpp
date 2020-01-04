@@ -282,6 +282,13 @@ private:
 	//! Mask controlling which info display flags should be honored.
 	static StelObject::InfoStringGroupFlags flagsMask;
 	static Vec3f invisibleSatelliteColor;
+	
+	static Vec3f notVisibleColor;
+	static Vec3f visibleColor;
+	static Vec3f radarSunColor;
+	static Vec3f radarNightColor;
+	static Vec3f penumbralColor;
+	static Vec3f annualColor;
 
 	static double timeRateLimit;
 
