@@ -613,6 +613,8 @@ private:
 
 	int iridiumFlaresPredictionDepth;
 
+	double heightlimit;
+
 	// GUI
 	SatellitesDialog* configDialog;
 
