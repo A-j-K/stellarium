@@ -44,18 +44,20 @@
 
 #include "external/qtcompress/qzipreader.h"
 
+#include <QDebug>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QKeyEvent>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QKeyEvent>
-#include <QDebug>
-#include <QFileInfo>
-#include <QFile>
+#include <QTemporaryFile>
 #include <QTimer>
-#include <QVariantMap>
 #include <QVariant>
 #include <QDir>
 #include <QTemporaryFile>
 #include <QRegExp>
+#include <QVariantMap>
 
 StelModule* SatellitesStelPluginInterface::getStelModule() const
 {
