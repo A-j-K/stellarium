@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/AstroNav">
+      <file>nav-star-indicator.png</file>
+    </qresource>
+</RCC>
