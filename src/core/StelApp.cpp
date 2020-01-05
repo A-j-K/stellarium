@@ -104,6 +104,10 @@ Q_IMPORT_PLUGIN(SimpleDrawLineStelPluginInterface)
 Q_IMPORT_PLUGIN(AngleMeasureStelPluginInterface)
 #endif
 
+#ifdef USE_STATIC_PLUGIN_ASTRONAV
+Q_IMPORT_PLUGIN(AstroNavStelPluginInterface)
+#endif
+
 #ifdef USE_STATIC_PLUGIN_ARCHAEOLINES
 Q_IMPORT_PLUGIN(ArchaeoLinesStelPluginInterface)
 #endif
