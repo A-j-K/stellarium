@@ -44,23 +44,18 @@
 
 #include "external/qtcompress/qzipreader.h"
 
-#include <QDebug>
-#include <QDir>
-#include <QFile>
-#include <QFileInfo>
-#include <QKeyEvent>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QTemporaryFile>
+#include <QKeyEvent>
+#include <QDebug>
+#include <QFileInfo>
+#include <QFile>
 #include <QTimer>
+#include <QVariantMap>
 #include <QVariant>
-<<<<<<< HEAD
 #include <QDir>
 #include <QTemporaryFile>
 #include <QRegExp>
-=======
-#include <QVariantMap>
->>>>>>> Bring in my custom changes into a branch to work there with them in future
 
 StelModule* SatellitesStelPluginInterface::getStelModule() const
 {
