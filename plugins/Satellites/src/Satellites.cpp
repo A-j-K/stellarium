@@ -55,6 +55,7 @@
 #include <QVariant>
 #include <QDir>
 #include <QTemporaryFile>
+#include <QRegExp>
 
 StelModule* SatellitesStelPluginInterface::getStelModule() const
 {
@@ -208,6 +209,7 @@ void Satellites::init()
 	// Handle changes to the observer location or wide range of dates:
 	StelCore* core = StelApp::getInstance().getCore();
 	connect(core, SIGNAL(locationChanged(StelLocation)), this, SLOT(updateObserverLocation(StelLocation)));
+	connect(core, SIGNAL(configurationDataSaved()), this, SLOT(saveSettings()));
 	
 	// let sat symbols stay on-screen even if highly unprecise over time 
 	//connect(core, SIGNAL(dateChangedForMonth()), this, SLOT(updateSatellitesVisibility()));
@@ -697,7 +699,7 @@ void Satellites::loadSettings()
 	conf->endGroup();
 }
 
-void Satellites::saveSettings()
+void Satellites::saveSettingsToConfig()
 {
 	QSettings* conf = StelApp::getInstance().getSettings();
 	conf->beginGroup("Satellites");
@@ -1347,7 +1349,7 @@ void Satellites::saveDownloadedUpdate(QNetworkReply* reply)
 				if (updateSources[i].url == url)
 				{
 					updateSources[i].file = tmpFile;
-					tmpFile = 0;
+					tmpFile = Q_NULLPTR;
 					break;
 				}
 			}
@@ -1392,7 +1394,7 @@ void Satellites::saveDownloadedUpdate(QNetworkReply* reply)
 			             updateSources[i].addNew);
 			updateSources[i].file->close();
 			delete updateSources[i].file;
-			updateSources[i].file = 0;
+			updateSources[i].file = Q_NULLPTR;
 		}
 	}
 	updateSources.clear();	
@@ -1653,9 +1655,11 @@ void Satellites::parseTleFile(QFile& openFile,
 				lastData.second = line;
 				// The Satellite Catalog Number is the second number
 				// on the second line.
-				QString id = line.split(' ').at(1).trimmed();
-				if (id.isEmpty())
+				QString id = getSatIdFromLine2(line);
+				if (id.isEmpty()) {
+					qDebug() << "[Satellites] failed to extract SatId from \"" << line << "\"";
 					continue;
+				}
 				lastData.id = id;
 				
 				// This is the second line and there will be no more,
@@ -1677,6 +1681,17 @@ void Satellites::parseTleFile(QFile& openFile,
 				qDebug() << "[Satellites] unprocessed line " << lineNumber <<  " in file " << QDir::toNativeSeparators(openFile.fileName());
 		}
 	}
+}
+
+QString Satellites::getSatIdFromLine2(const QString& line)
+{
+	QString id = line.split(' ',  QString::SkipEmptyParts).at(1).trimmed();
+	if (!id.isEmpty())
+	{
+		// Strip any leading zeros as they should be unique ints as strings.
+		id.remove(QRegExp("^[0]*"));
+	}
+	return id;
 }
 
 void Satellites::parseQSMagFile(QString qsMagFile)
