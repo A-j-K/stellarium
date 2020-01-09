@@ -215,10 +215,11 @@ void Satellites::init()
 	// Handle changes to the observer location or wide range of dates:
 	StelCore* core = StelApp::getInstance().getCore();
 	connect(core, SIGNAL(locationChanged(StelLocation)), this, SLOT(updateObserverLocation(StelLocation)));
-
-	// let sat symbols stay on-screen even if highly unprecise over time
-	// connect(core, SIGNAL(dateChangedForMonth()), this, SLOT(updateSatellitesVisibility()));
-	// connect(core, SIGNAL(dateChangedByYear()), this, SLOT(updateSatellitesVisibility()));
+	connect(core, SIGNAL(configurationDataSaved()), this, SLOT(saveSettings()));
+	
+	// let sat symbols stay on-screen even if highly unprecise over time 
+	//connect(core, SIGNAL(dateChangedForMonth()), this, SLOT(updateSatellitesVisibility()));
+	//connect(core, SIGNAL(dateChangedByYear()), this, SLOT(updateSatellitesVisibility()));
 }
 
 void Satellites::updateSatellitesVisibility()
@@ -692,7 +693,7 @@ void Satellites::loadSettings()
 	conf->endGroup();
 }
 
-void Satellites::saveSettings()
+void Satellites::saveSettingsToConfig()
 {
 	QSettings* conf = StelApp::getInstance().getSettings();
 	conf->beginGroup("Satellites");
