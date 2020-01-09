@@ -1585,6 +1585,7 @@ void Satellites::parseTleFile(QFile& openFile, TleDataHash& tleList, bool addFla
 				lastData.second = line;
 				// The Satellite Catalog Number is the second number
 				// on the second line.
+
 				QString id = getSatIdFromLine2(line);
 				if (id.isEmpty()) {
 					qDebug() << "[Satellites] failed to extract SatId from \"" << line << "\"";
