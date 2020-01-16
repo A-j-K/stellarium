@@ -117,6 +117,8 @@ public:
 	// Public API functions.
 	StelTextureSP getNavstarMarker() { return markerTexture; }
 
+	void getCelestialNavData(StelCore* core, StelObjectP stelObject, QMap<QString, double>& map);
+
 signals:
 	//! @param state the new update state.
 	// void updateStateChanged(AstroNav::UpdateState state);
@@ -140,6 +142,11 @@ public slots:
 private:
 	void markNavstars(StelCore* core, StelProjectorP projector, Vec3d colours = {1., 0., 0.}); 
 	void populateNavstarPointers(const QList<int>& hipNumbers);
+
+	QString radToDm(double rad);
+	double wrap2pi(double d);
+	double wrap360(double d);
+
 
 	// Font used for displaying our text
 	QFont font;
