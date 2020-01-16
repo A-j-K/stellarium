@@ -22,10 +22,9 @@
 #include "StelCore.hpp"
 #include "StelObject.hpp"
 #include "StelObjectModule.hpp"
-//#include "StelFader.hpp"
 #include "StelTexture.hpp"
 #include "StelProjector.hpp"
-//#include "StelTextureTypes.hpp"
+
 #include <QDateTime>
 #include <QFont>
 #include <QList>
@@ -35,15 +34,11 @@
 
 #include "Almanac/AlmanacStrategy.hpp"
 
-// class QSettings;
-// class QTimer;
-// class AstroNavDialog;
 class StelPainter;
-// class StelButton;
 
 /*! @defgroup AstroNav AstroNavStar Plug-in
 @{
-The %AstroNav plugin plots the position of nomiated known navigation stars.
+The %AstroNav plugin plots the position of nomiated known navigation stars and solves the sphical triangle as per the Nautical Almanac.
 @}
 */
 
@@ -57,12 +52,7 @@ The %AstroNav plugin plots the position of nomiated known navigation stars.
 class AstroNav : public StelObjectModule
 {
 	Q_OBJECT
-	// Q_PROPERTY(bool showAstroNav READ getFlagShowAstroNav WRITE setFlagShowAstroNav NOTIFY
-	// flagAstroNavVisibilityChanged)
-	Q_PROPERTY(bool showAstroNav READ getFlagShowAstroNav WRITE setFlagShowAstroNav)
-	// Q_PROPERTY(Vec3f markerColor READ getMarkerColor WRITE setMarkerColor NOTIFY markerColorChanged)
-	// Q_PROPERTY(
-	//  Vec3f habitableColor READ getHabitableColor WRITE setHabitableColor NOTIFY habitableColorChanged)
+
 public:
 	static const QString ASTRONAVSTAR_TYPE;
 
@@ -98,58 +88,41 @@ public:
 	//! @param id The exoplanet system id
 	virtual StelObjectP searchByID(const QString& id) const;
 
-
+	//! Further interface implementations.
 	virtual QString getAuthorName() const { return "Andy Kirkham"; }
-
-	//! Find and return the list of at most maxNbItem objects auto-completing the passed object name.
-	//! @param objPrefix the case insensitive first letters of the searched object
-	//! @param maxNbItem the maximum number of returned object names
-	//! @param useStartOfWords the autofill mode for returned objects names
-	//! @return a list of matching object name by order of relevance, or an empty list if nothing match
-	// virtual QStringList listMatchingObjects(const QString& objPrefix, int maxNbItem = 5,
-	// bool useStartOfWords = false, bool inEnglish = false) const;
-
 	virtual QStringList listAllObjects(bool inEnglish) const;
-
 	virtual QString getName() const;
 	virtual QString getStelObjectType() const { return AstroNav::ASTRONAVSTAR_TYPE; }
 
 	// Public API functions.
 	StelTextureSP getNavstarMarker() { return markerTexture; }
-
 	void getCelestialNavData(StelCore* core, StelObjectP stelObject, QMap<QString, double>& map);
 
 signals:
-	//! @param state the new update state.
-	// void updateStateChanged(AstroNav::UpdateState state);
-	// void flagAstroNavVisibilityChanged(bool b);
-	// void markerColorChanged(Vec3f);
-	// void habitableColorChanged(Vec3f);
 
 public slots:
-	//! Enable/disable display of markers of exoplanetary systems
-	//! @param b boolean flag
-	void setFlagShowAstroNav(bool b) { flagShowAstroNav = b; }
-
-	//! Get status to display of markers of exoplanetary systems
-	//! @return true if it's visible
-	bool getFlagShowAstroNav(void) const { return flagShowAstroNav; }
-
-	//! Define whether the button toggling exoplanets should be visible
-	void setFlagShowAstroNavButton(bool b) { flagShowAstroNavButton = b; }
-	bool getFlagShowAstroNavButton(void) const { return flagShowAstroNavButton; }
 
 private:
+	//! Highlight the Nav stars on the display.
 	void markNavstars(StelCore* core, StelProjectorP projector, Vec3d colours = {1., 0., 0.}); 
+
+	//! Create a list of Nav stars based on the current strategy.
 	void populateNavstarPointers(const QList<int>& hipNumbers);
 
+	//! Build the extra sinfo string.
+	QString extraInfoString(StelCore* core, StelObjectP selectedObject, bool withTables);
+
+	//! Convert an angle in radians to DM.m format.
 	QString radToDm(double rad);
+
+	//! Convert an angle in radians to a geodetic location.
+	QString radToDmPos(double rad, QChar pos = 'N', QChar neg = 'S');
+
+	//! Ensure value is between zero and 2PI
 	double wrap2pi(double d);
+
+	//! Ensure value is between zero and 360 degrees.
 	double wrap360(double d);
-
-
-	// Font used for displaying our text
-	QFont font;
 
 	//! A fake method for strings marked for translation.
 	//! Use it instead of translations.h for N_() strings, except perhaps for
@@ -157,17 +130,10 @@ private:
 	//! place.)
 	// static void translations();
 
-	// variables and functions for the updater
-	// UpdateState updateState;
-	QDateTime lastUpdate;
-	// QSettings* conf;
-
-	// GUI
-	bool flagShowAstroNav;
-	bool flagShowAstroNavButton;
-
+	//! Used to render the nav star pointers.
 	StelTextureSP markerTexture;
 
+	//! List of loaded nav stars.
 	QVector<StelObjectP> navstars;
 
 private slots:
