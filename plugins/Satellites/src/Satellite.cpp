@@ -87,12 +87,14 @@ Satellite::Satellite(const QString& identifier, const QVariantMap& map)
 	, height(0.)
 	, range(0.)
 	, rangeRate(0.)
-	, hintColor(0.0,0.0,0.0)
-	, lastUpdated()
-	, isISS(false)
+	, hintColor(0.f,0.f,0.f)
+	, lastUpdated()	
+	, isISS(false)	
 	, pSatWrapper(Q_NULLPTR)
 	, visibility(gSatWrapper::UNKNOWN)
 	, phaseAngle(0.)
+	, infoColor(0.f,0.f,0.f)
+	, orbitColor(0.f,0.f,0.f)
 	, lastEpochCompForOrbit(0.)
 	, epochTime(0.)
 {
@@ -135,6 +137,19 @@ Satellite::Satellite(const QString& identifier, const QVariantMap& map)
 	else
 	{
 		orbitColor = hintColor;
+	}
+
+	// Satellite info color
+	list = map.value("infoColor", QVariantList()).toList();
+	if (list.count() == 3)
+	{
+		infoColor[0] = list.at(0).toFloat();
+		infoColor[1] = list.at(1).toFloat();
+		infoColor[2] = list.at(2).toFloat();
+	}
+	else
+	{
+		infoColor = hintColor;
 	}
 
 	if (map.contains("comms"))
@@ -215,11 +230,13 @@ QVariantMap Satellite::getMap(void)
 	map["orbitVisible"] = orbitDisplayed;
 	if (userDefined)
 		map.insert("userDefined", userDefined);
-	QVariantList col, orbitCol;
+	QVariantList col, orbitCol, infoCol;
 	col << roundToDp(hintColor[0],3) << roundToDp(hintColor[1], 3) << roundToDp(hintColor[2], 3);
 	orbitCol << roundToDp(orbitColor[0], 3) << roundToDp(orbitColor[1], 3) << roundToDp(orbitColor[2],3);
+	infoCol << roundToDp(infoColor[0], 3) << roundToDp(infoColor[1], 3) << roundToDp(infoColor[2],3);
 	map["hintColor"] = col;
 	map["orbitColor"] = orbitCol;
+	map["infoColor"] = infoCol;
 	QVariantList commList;
 	for (const auto& c : comms)
 	{
@@ -255,6 +272,7 @@ QString Satellite::getInfoString(const StelCore *core, const InfoStringGroup& fl
 {
 	QString str;
 	QTextStream oss(&str);
+	QString degree = QChar(0x00B0);
 	
 	if (flags & Name)
 	{
@@ -322,6 +340,9 @@ QString Satellite::getInfoString(const StelCore *core, const InfoStringGroup& fl
 			       .arg(mins).arg(StelUtils::hoursToHmsStr(orbitalPeriod/60.0, true))
 			       .arg(1440.0/orbitalPeriod, 9, 'f', 5).arg(rpd) << "<br/>";
 		}
+		float inclination = getSatInclinationFromLine2(tleElements.second.data());
+		oss << QString("%1: %2 (%3%4)").arg(q_("Inclination")).arg(StelUtils::decDegToDmsStr(inclination))
+		       .arg(QString::number(inclination, 'f', 4)).arg(degree) << "<br/>";
 		oss << QString("%1: %2%3/%4%5")
 		       .arg(q_("SubPoint (Lat./Long.)"))
 		       .arg(latLongSubPointPosition[0], 5, 'f', 2)
@@ -362,7 +383,7 @@ QString Satellite::getInfoString(const StelCore *core, const InfoStringGroup& fl
 		{  // Iridium
 			oss << QString("%1: %2%3").arg(q_("Sun reflection angle"))
 			       .arg(sunReflAngle,0,'f',1)
-			       .arg(QChar(0x00B0)); // Degree sign
+			       .arg(degree);
 			oss << "<br />";
 		}
 
@@ -440,6 +461,12 @@ QString Satellite::getInfoString(const StelCore *core, const InfoStringGroup& fl
 
 	postProcessInfoString(str, flags);
 	return str;
+}
+
+float Satellite::getSatInclinationFromLine2(QString tle2) const
+{
+	QString incl = tle2.left(16).right(7);
+	return incl.toFloat();
 }
 
 QVariantMap Satellite::getInfoMap(const StelCore *core) const
@@ -540,7 +567,7 @@ Vec3d Satellite::getJ2000EquatorialPos(const StelCore* core) const
 
 Vec3f Satellite::getInfoColor(void) const
 {
-	return hintColor;
+	return infoColor;
 }
 
 float Satellite::getVMagnitude(const StelCore* core) const

@@ -217,8 +217,8 @@ private:
 	//! returns 0 - 1.0 for the DRAWORBIT_FADE_NUMBER segments at
 	//! each end of an orbit, with 1 in the middle.
 	float calculateOrbitSegmentIntensity(int segNum);
+	float getSatInclinationFromLine2(QString tle2) const;
 
-private:
 	bool initialized;
 	//! Flag indicating whether the satellite should be displayed.
 	//! Should not be confused with the pedicted visibility of the 
@@ -303,6 +303,7 @@ private:
 	static double sunReflAngle; // for Iridium satellites
 	//static double timeShift; // for Iridium satellites UNUSED
 
+	Vec3f    infoColor;
 	//Satellite Orbit Draw
 	Vec3f    orbitColor;
 	double    lastEpochCompForOrbit; //measured in Julian Days
