@@ -40,6 +40,7 @@
 const QString AstroNav::ASTRONAVSTAR_TYPE = QStringLiteral("Navigation Star");
 
 AstroNav::AstroNav()
+	: withTables(false)
 {
 	;
 }
@@ -87,20 +88,18 @@ void AstroNav::update(double deltaTime) {}
 
 void AstroNav::draw(StelCore* core)
 {
-	const QSharedPointer<class Planet> p = core->getCurrentPlanet();
-	if ("Earth" != p->getEnglishName()) return;
-	if (0 == navstars.size()) return;
+	if (0 == navstars.size() || "Earth" != core->getCurrentPlanet()->getEnglishName()) 
+		return;
 
-	StelProjectorP projector = core->getProjection(StelCore::FrameJ2000);
-	markNavstars(core, projector);
+	markNavstars(core, core->getProjection(StelCore::FrameJ2000));
 
 	bool isSource = StelApp::getInstance().getStelObjectMgr().getWasSelected();
 
 	if (isSource) 
 	{
-		bool withTables = StelApp::getInstance().getFlagUseFormattingOutput();
+		withTables = StelApp::getInstance().getFlagUseFormattingOutput();
 		StelObjectP selectedObject = StelApp::getInstance().getStelObjectMgr().getSelectedObject()[0];
-		QString extraInfo = extraInfoString(core, selectedObject, withTables);
+		QString extraInfo = extraInfoString(core, selectedObject);
 		if (!extraInfo.isEmpty())
 		{
 			selectedObject->setExtraInfoString(extraInfo);
@@ -108,7 +107,7 @@ void AstroNav::draw(StelCore* core)
 	}
 }
 
-QString AstroNav::extraInfoString(StelCore* core, StelObjectP selectedObject, bool withTables)
+QString AstroNav::extraInfoString(StelCore* core, StelObjectP selectedObject)
 {
 	QString output, extraText, degreesSymbol;
 	QMap<QString, double> data;
@@ -129,18 +128,32 @@ QString AstroNav::extraInfoString(StelCore* core, StelObjectP selectedObject, bo
 
 	degreesSymbol += QChar(0x00B0);
 
-	oss << oneRowTwoCells(qc_("UTC", "universal coordinated time"), StelMainScriptAPI::getDate("utc"), withTables);
-	oss << oneRowTwoCells(qc_("Ho", "altitude measured via a sextant"), radToDm(data["alt_app_rad"]) + extraText, withTables);
-	oss << oneRowTwoCells(qc_("Pos", "geodetic cordinate system"), radToDmPos(data["lat_rad"]) + "/" + radToDmPos(data["lon_rad"]), withTables);
-	oss << oneRowTwoCells(qc_("GMST", "greenwich mean sidereal time (ERA)"), data["gmst_deg"], withTables, degreesSymbol);
-	oss << oneRowTwoCells(qc_("LMST", "local mean sidereal time"), data["lmst_deg"], withTables, degreesSymbol);
-	oss << oneRowTwoCells(qc_("GHA", "first point of aries greenwich hour angle") + "&#9800;", radToDm(data["gmst_rad"]), withTables);
-	oss << oneRowTwoCells(qc_("SHA", "sidereal hour angle"), radToDm(data["object_sha_rad"]), withTables);
-	oss << oneRowTwoCells(qc_("DEC", "declination, celestial coordinate system"), radToDm(data["object_dec_rad"]), withTables);
-	oss << oneRowTwoCells(qc_("GHA", "greenwich hour angle of selected object"), radToDm(data["gha_rad"]), withTables);
-	oss << oneRowTwoCells(qc_("LHA", "local hour angle of selected object"), radToDm(data["lha_rad"]), withTables);
-	oss << oneRowTwoCells(qc_("Hc/Zn", "celestial navigation coordinate system, Hc altitude computed and Zn is azimuth computed"),
-		radToDm(data["Hc_rad"]) + "/" + radToDm(data["Zn_rad"]), withTables);
+	oss << oneRowTwoCells(qc_("UTC", "universal coordinated time"), 
+		StelMainScriptAPI::getDate("utc"), withTables);
+	oss << oneRowTwoCells(qc_("Ho", "altitude measured via a sextant"), 
+		radToDm(data["alt_app_rad"]) + extraText, withTables);
+	oss << oneRowTwoCells(qc_("Pos", "geodetic cordinate system"), 
+		radToDm(data["lat_rad"], 'N', 'S') + "/" + radToDm(data["lon_rad"], 'E', 'W'), withTables);
+	oss << oneRowTwoCells(qc_("GMST", "greenwich mean sidereal time (ERA)"), 
+		QString::number(data["gmst_deg"], 'f', 3), withTables, degreesSymbol);
+	oss << oneRowTwoCells(qc_("LMST", "local mean sidereal time"), 
+		QString::number(data["lmst_deg"], 'f', 3), withTables, degreesSymbol);
+	oss << oneRowTwoCells(qc_("GHA", "first point of aries greenwich hour angle") + "&#9800;", 
+		radToDm(data["gmst_rad"]), withTables);
+	oss << oneRowTwoCells(qc_("SHA", "sidereal hour angle"), 
+		radToDm(data["object_sha_rad"]), withTables);
+	oss << oneRowTwoCells(qc_("DEC", "celestial coordinate system"), 
+		radToDm(data["object_dec_rad"]), withTables);
+	oss << oneRowTwoCells(qc_("GHA", "greenwich hour angle"), 
+		radToDm(data["gha_rad"]), withTables);
+	oss << oneRowTwoCells(qc_("LHA", "local hour angle"), 
+		radToDm(data["lha_rad"]), withTables);	
+	//! TRANSLATORS: This is the navigation computed altitude
+	oss << oneRowTwoCells(qc_("Hc", "horizontal coordinate system"),
+		radToDm(data["Hc_rad"]), withTables);
+	//! TRANSLATORS: This is the navigation computed azimuth
+	oss << oneRowTwoCells(qc_("Zn", "horizontal coordinate system"),
+		radToDm(data["Zn_rad"]), withTables);
 
 	if (withTables)
 		oss << "</table>";
@@ -233,7 +246,7 @@ double AstroNav::wrap360(double d)
 	return d;
 }
 
-QString AstroNav::radToDm(double rad)
+QString AstroNav::radToDm(double rad, QChar pos, QChar neg)
 {
 	QString output;
 	QTextStream oss(&output);
@@ -245,37 +258,25 @@ QString AstroNav::radToDm(double rad)
 	StelUtils::radToDms(rad, sign, d, m, s);
 	md = static_cast<double>(m);
 	md += s / 60.;
-	oss << (sign ? '+':'-') << d << QChar(0x00B0) << " " << md << "'";
-	return oss.readAll();
-}
-
-QString AstroNav::radToDmPos(double rad, QChar pos, QChar neg)
-{
-	QString output;
-	QTextStream oss(&output);
-	bool sign;
-	double s, md;
-	unsigned int d, m;
-	oss.setRealNumberNotation(QTextStream::FixedNotation);
-	oss.setRealNumberPrecision(1);
-	StelUtils::radToDms(rad, sign, d, m, s);
-	md = static_cast<double>(m);
-	md += s / 60.;
-	oss << (sign ? pos : neg) << d << QChar(0x00B0) << " " << md << "'";
+	oss << (sign ? pos : neg) << d << QChar(0x00B0) << md << "'";
 	return oss.readAll();
 }
 
 void AstroNav::markNavstars(StelCore* core, StelProjectorP projector, Vec3d colours)
 {
 	int numOfStars = navstars.size();
-	if (numOfStars > 0)
+	if (numOfStars > 0 && !markerTexture.isNull())
 	{
 		Vec3d pos;
 		StelPainter painter(projector);
-		for (int i = 0; i < numOfStars; i++)
+		float mlimit = core->getSkyDrawer()->getLimitMagnitude();
+		for (auto itor = navstars.begin(); itor != navstars.end(); ++itor)
 		{
-			if (projector->projectCheck(navstars[i]->getJ2000EquatorialPos(core), pos))
-				if (!markerTexture.isNull())
+			StelObjectP pNavStar = *itor;
+			if (pNavStar->getVMagnitude(core) < mlimit)
+			{
+				Vec3d cpos = pNavStar->getJ2000EquatorialPos(core);
+				if (projector->projectCheck(cpos, pos))
 				{
 					painter.setBlending(true);
 					painter.setColor(colours[0], colours[1], colours[2]);
@@ -283,9 +284,10 @@ void AstroNav::markNavstars(StelCore* core, StelProjectorP projector, Vec3d colo
 					painter.drawSprite2dMode(static_cast<float>(pos[0]), static_cast<float>(pos[1]), 16.f);
 					painter.drawText(
 						static_cast<float>(pos[0]), static_cast<float>(pos[1]),
-						navstars[i]->getNameI18n(), 0, 10.f, 10.f, false
+						pNavStar->getNameI18n(), 0, 10.f, 10.f, false
 					);
 				}
+			}
 		}
 	}
 }
@@ -294,28 +296,10 @@ QString AstroNav::oneRowTwoCells(const QString& a, const QString& b, bool w, QSt
 {
 	QString rval;
 	if (w) {
-		rval += "<tr><td>:" + a + "</td><td>" + b + c + "</td></tr>";
+		rval += "<tr><td>" + a + ":</td><td>" + b + c + "</td></tr>";
 	}
 	else {
 		rval += a + ": " + b + c + "<br/>";
-	}
-	return rval;
-}
-
-QString AstroNav::oneRowTwoCells(const QString& a, double b, bool w, QString c)
-{
-	QString rval;
-	QString temp;
-	QTextStream oss(&temp);
-	oss.setRealNumberNotation(QTextStream::FixedNotation);
-	oss.setRealNumberPrecision(3);
-	oss << b;
-	if (w) {
-
-		rval += "<tr><td>:" + a + "</td><td>" + oss.string() + c + "</td></tr>";
-	}
-	else {
-		rval += a + ": " + oss.string() + c + "<br/>";
 	}
 	return rval;
 }

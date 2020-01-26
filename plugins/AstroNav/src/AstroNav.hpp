@@ -103,6 +103,9 @@ signals:
 public slots:
 
 private:
+	//! Whether to use HTML tables in info string
+	bool withTables;
+
 	//! Highlight the Nav stars on the display.
 	void markNavstars(StelCore* core, StelProjectorP projector, Vec3d colours = {1., 0., 0.}); 
 
@@ -110,13 +113,13 @@ private:
 	void populateNavstarPointers(const QList<int>& hipNumbers);
 
 	//! Build the extra sinfo string.
-	QString extraInfoString(StelCore* core, StelObjectP selectedObject, bool withTables);
+	QString extraInfoString(StelCore* core, StelObjectP selectedObject);
 
 	//! Convert an angle in radians to DM.m format.
-	QString radToDm(double rad);
+	QString radToDm(double rad, QChar pos = '+', QChar neg = '-');
 
 	//! Convert an angle in radians to a geodetic location.
-	QString radToDmPos(double rad, QChar pos = 'N', QChar neg = 'S');
+	//QString radToDmPos(double rad, QChar pos = 'N', QChar neg = 'S');
 
 	//! Ensure value is between zero and 2PI
 	double wrap2pi(double d);
@@ -126,7 +129,6 @@ private:
 
 	//! Create a single information string from two string values.
 	QString oneRowTwoCells(const QString& a, const QString& b, bool w, QString c = "");	
-	QString oneRowTwoCells(const QString& a, double b, bool w, QString = "");
 
 	//! A fake method for strings marked for translation.
 	//! Use it instead of translations.h for N_() strings, except perhaps for
