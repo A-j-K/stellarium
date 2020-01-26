@@ -109,13 +109,10 @@ void AstroNav::draw(StelCore* core)
 
 QString AstroNav::extraInfoString(StelCore* core, StelObjectP selectedObject)
 {
-	QString output, extraText, degreesSymbol;
+	QString output = "", extraText, degreesSymbol;
 	QMap<QString, double> data;
-	QTextStream oss(&output);
 	QString englishName = selectedObject->getEnglishName();
 	getCelestialNavData(core, selectedObject, data);
-	oss.setRealNumberNotation(QTextStream::FixedNotation);
-	oss.setRealNumberPrecision(3);
 	if ("Sun" == englishName || "Moon" == englishName) 
 	{
 		double d = selectedObject->getAngularSize(core);
@@ -124,41 +121,41 @@ QString AstroNav::extraInfoString(StelCore* core, StelObjectP selectedObject)
 	}
 
 	if (withTables)
-		oss << "<table>";
+		output += "<table>";
 
 	degreesSymbol += QChar(0x00B0);
 
-	oss << oneRowTwoCells(qc_("UTC", "universal coordinated time"), 
-		StelMainScriptAPI::getDate("utc"), withTables);
-	oss << oneRowTwoCells(qc_("Ho", "altitude measured via a sextant"), 
-		radToDm(data["alt_app_rad"]) + extraText, withTables);
-	oss << oneRowTwoCells(qc_("Pos", "geodetic cordinate system"), 
-		radToDm(data["lat_rad"], 'N', 'S') + "/" + radToDm(data["lon_rad"], 'E', 'W'), withTables);
-	oss << oneRowTwoCells(qc_("GMST", "greenwich mean sidereal time (ERA)"), 
-		QString::number(data["gmst_deg"], 'f', 3), withTables, degreesSymbol);
-	oss << oneRowTwoCells(qc_("LMST", "local mean sidereal time"), 
-		QString::number(data["lmst_deg"], 'f', 3), withTables, degreesSymbol);
-	oss << oneRowTwoCells(qc_("GHA", "first point of aries greenwich hour angle") + "&#9800;", 
-		radToDm(data["gmst_rad"]), withTables);
-	oss << oneRowTwoCells(qc_("SHA", "sidereal hour angle"), 
-		radToDm(data["object_sha_rad"]), withTables);
-	oss << oneRowTwoCells(qc_("DEC", "celestial coordinate system"), 
-		radToDm(data["object_dec_rad"]), withTables);
-	oss << oneRowTwoCells(qc_("GHA", "greenwich hour angle"), 
-		radToDm(data["gha_rad"]), withTables);
-	oss << oneRowTwoCells(qc_("LHA", "local hour angle"), 
-		radToDm(data["lha_rad"]), withTables);	
+	output += oneRowTwoCells(qc_("UTC", "universal coordinated time"), 
+		StelMainScriptAPI::getDate("utc"));
+	output += oneRowTwoCells(qc_("Ho", "altitude measured via a sextant"), 
+		radToDm(data["alt_app_rad"]) + extraText);
+	output += oneRowTwoCells(qc_("Pos", "geodetic cordinate system"), 
+		radToDm(data["lat_rad"], "N", "S") + "/" + radToDm(data["lon_rad"], "E", "W"));
+	output += oneRowTwoCells(qc_("GMST", "greenwich mean sidereal time (ERA)"), 
+		QString::number(data["gmst_deg"], 'f', 3), degreesSymbol);
+	output += oneRowTwoCells(qc_("LMST", "local mean sidereal time"), 
+		QString::number(data["lmst_deg"], 'f', 3), degreesSymbol);
+	output += oneRowTwoCells(qc_("GHA", "first point of aries greenwich hour angle") + "&#9800;", 
+		radToDm(data["gmst_rad"]));
+	output += oneRowTwoCells(qc_("SHA", "sidereal hour angle"), 
+		radToDm(data["object_sha_rad"]));
+	output += oneRowTwoCells(qc_("DEC", "celestial coordinate system"), 
+		radToDm(data["object_dec_rad"]));
+	output += oneRowTwoCells(qc_("GHA", "greenwich hour angle"), 
+		radToDm(data["gha_rad"]));
+	output += oneRowTwoCells(qc_("LHA", "local hour angle"), 
+		radToDm(data["lha_rad"]));	
 	//! TRANSLATORS: This is the navigation computed altitude
-	oss << oneRowTwoCells(qc_("Hc", "horizontal coordinate system"),
-		radToDm(data["Hc_rad"]), withTables);
+	output += oneRowTwoCells(qc_("Hc", "horizontal coordinate system, altitude"),
+		radToDm(data["Hc_rad"]));
 	//! TRANSLATORS: This is the navigation computed azimuth
-	oss << oneRowTwoCells(qc_("Zn", "horizontal coordinate system"),
-		radToDm(data["Zn_rad"]), withTables);
+	output += oneRowTwoCells(qc_("Zn", "horizontal coordinate system, azimuth"),
+		radToDm(data["Zn_rad"]));
 
 	if (withTables)
-		oss << "</table>";
+		output += "</table>";
 
-	return oss.readAll();
+	return output;
 }
 
 void AstroNav::getCelestialNavData(StelCore* core, StelObjectP 
@@ -246,20 +243,21 @@ double AstroNav::wrap360(double d)
 	return d;
 }
 
-QString AstroNav::radToDm(double rad, QChar pos, QChar neg)
+QString AstroNav::radToDm(double rad, const QString pos, const QString neg)
 {
-	QString output;
-	QTextStream oss(&output);
+	QString rval;
 	bool sign;
 	double s, md;
 	unsigned int d, m;
-	oss.setRealNumberNotation(QTextStream::FixedNotation);
-	oss.setRealNumberPrecision(1);
 	StelUtils::radToDms(rad, sign, d, m, s);
 	md = static_cast<double>(m);
-	md += s / 60.;
-	oss << (sign ? pos : neg) << d << QChar(0x00B0) << md << "'";
-	return oss.readAll();
+	md += (s / 60.);
+	rval += (sign ? pos : neg)
+		+ QString::number(d, 'f', 0)
+		+ QChar(0x00B0)
+		+ QString::number(md, 'f', 1)
+		+ "'";
+	return rval;
 }
 
 void AstroNav::markNavstars(StelCore* core, StelProjectorP projector, Vec3d colours)
@@ -292,10 +290,10 @@ void AstroNav::markNavstars(StelCore* core, StelProjectorP projector, Vec3d colo
 	}
 }
 
-QString AstroNav::oneRowTwoCells(const QString& a, const QString& b, bool w, QString c)
+QString AstroNav::oneRowTwoCells(const QString& a, const QString& b, QString c)
 {
 	QString rval;
-	if (w) {
+	if (withTables) {
 		rval += "<tr><td>" + a + ":</td><td>" + b + c + "</td></tr>";
 	}
 	else {

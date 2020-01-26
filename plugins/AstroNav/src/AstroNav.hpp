@@ -116,7 +116,7 @@ private:
 	QString extraInfoString(StelCore* core, StelObjectP selectedObject);
 
 	//! Convert an angle in radians to DM.m format.
-	QString radToDm(double rad, QChar pos = '+', QChar neg = '-');
+	QString radToDm(double rad, const QString pos = "+", const QString neg = "-");
 
 	//! Convert an angle in radians to a geodetic location.
 	//QString radToDmPos(double rad, QChar pos = 'N', QChar neg = 'S');
@@ -128,7 +128,7 @@ private:
 	double wrap360(double d);
 
 	//! Create a single information string from two string values.
-	QString oneRowTwoCells(const QString& a, const QString& b, bool w, QString c = "");	
+	QString oneRowTwoCells(const QString& a, const QString& b, QString c = "");	
 
 	//! A fake method for strings marked for translation.
 	//! Use it instead of translations.h for N_() strings, except perhaps for
