@@ -110,7 +110,7 @@ void AstroNav::draw(StelCore* core)
 
 QString AstroNav::extraInfoString(StelCore* core, StelObjectP selectedObject, bool withTables)
 {
-	QString output, extraText, cellOpen, cellClose = " ", lineOpen, lineClose = "<br/>";
+	QString output, extraText, degreesSymbol;
 	QMap<QString, double> data;
 	QTextStream oss(&output);
 	QString englishName = selectedObject->getEnglishName();
@@ -121,80 +121,26 @@ QString AstroNav::extraInfoString(StelCore* core, StelObjectP selectedObject, bo
 	{
 		double d = selectedObject->getAngularSize(core);
 		data["alt_app_rad"] += ((d/2)*M_PI)/180.; 
-		extraText = QString(qc_(" (lower limb)", "the lowest part of the Sun/Moon"));
+		extraText = " " + QString(qc_("(lower limb)", "the lowest part of the Sun/Moon"));
 	}
+
 	if (withTables)
-	{
 		oss << "<table>";
-		lineOpen = "<tr>";
-		lineClose = "</tr>";
-		cellOpen = "<td>";
-		cellClose = "</td>";
-	}
 
-	if(!withTables) 
-		oss << "<h3>" << selectedObject->getNameI18n() << qc_(" Celestial Nav Data", "") << "</h3>";
+	degreesSymbol += QChar(0x00B0);
 
-	oss << lineOpen 
-		<< cellOpen << qc_("UTC", "universal coordinated time") << ": " << cellClose 
-		<< cellOpen << StelMainScriptAPI::getDate("utc") << cellClose 
-		<< lineClose;
-	
-	oss << lineOpen 
-		<< cellOpen << qc_("Ho", "altitude measured via a sextant") << ": " << cellClose 
-		<< cellOpen << radToDm(data["alt_app_rad"]) << extraText << cellClose
-		<< lineClose;
-
-	if(!withTables) 
-		oss << "<strong>" << qc_("Target information", "information about the results of the observation") << "</strong><br/>";
-
-	oss << lineOpen 
-		<< cellOpen << qc_("Pos: ", "geodetic cordinate system") << ": " << cellClose
-		<< cellOpen << radToDmPos(data["lat_rad"]) << "/" << radToDmPos(data["lon_rad"], 'E', 'W') << QChar(0x00B0) 
-		<< lineClose;
-
-	oss << lineOpen 
-		<< cellOpen << qc_("GMST: ", "greenwich mean sidereal time (ERA)") << ": " << cellClose
-		<< cellOpen << data["gmst_deg"] << QChar(0x00B0) 
-		<< lineClose;
-
-	oss << lineOpen 
-		<< cellOpen << qc_("LMST: ", "local mean sidereal time") << ": " << cellClose
-		<< cellOpen << data["lmst_deg"] << QChar(0x00B0) << cellClose
-		<< lineClose;
-
-	oss << lineOpen 
-		<< cellOpen << qc_("GHA&#9800;", "greenwich hour angle of first point of aries") << ": " << cellClose
-		<< cellOpen << radToDm(data["gmst_rad"]) << cellClose
-		<< lineClose;
-
-	oss << lineOpen 
-		<< cellOpen << qc_("SHA", "sidereal hour angle") << ": " << cellClose
-		<< cellOpen << radToDm(data["object_sha_rad"]) << cellClose
-		<< lineClose;
-
-	oss << lineOpen 
-		<< cellOpen << qc_("DEC", "declination, celestial coordinate system") << ": " << cellClose
-		<< cellOpen << radToDm(data["object_dec_rad"]) << cellClose
-		<< lineClose;
-
-	oss << lineOpen 
-		<< cellOpen << qc_("GHA", "greenwich hour angle") << ": " << cellClose
-		<< cellOpen << radToDm(data["gha_rad"]) << cellClose
-		<< lineClose;
-
-	oss << lineOpen 
-		<< cellOpen << qc_("LHA", "local hour angle") << ": " << cellClose
-		<< cellOpen << radToDm(data["lha_rad"]) << cellClose
-		<< lineClose;
-
-	if(!withTables) 
-		oss << "<strong>" << qc_("Sight Reduction", "solving a triangle on a sphere surface with spherical geometry") << "</strong><br/>";
-
-	oss << lineOpen 
-		<< cellOpen << qc_("Hc/Zn", "celestial navigation coordinate system, Hc altitude computed and Zn is azimuth computed") << ": " << cellClose
-		<< cellOpen << radToDm(data["Hc_rad"]) << "/" << radToDm(data["Zn_rad"]) << cellClose
-		<< lineClose;
+	oss << oneRowTwoCells(qc_("UTC", "universal coordinated time"), StelMainScriptAPI::getDate("utc"), withTables);
+	oss << oneRowTwoCells(qc_("Ho", "altitude measured via a sextant"), radToDm(data["alt_app_rad"]) + extraText, withTables);
+	oss << oneRowTwoCells(qc_("Pos", "geodetic cordinate system"), radToDmPos(data["lat_rad"]) + "/" + radToDmPos(data["lon_rad"]), withTables);
+	oss << oneRowTwoCells(qc_("GMST", "greenwich mean sidereal time (ERA)"), data["gmst_deg"], withTables, degreesSymbol);
+	oss << oneRowTwoCells(qc_("LMST", "local mean sidereal time"), data["lmst_deg"], withTables, degreesSymbol);
+	oss << oneRowTwoCells(qc_("GHA", "first point of aries greenwich hour angle") + "&#9800;", radToDm(data["gmst_rad"]), withTables);
+	oss << oneRowTwoCells(qc_("SHA", "sidereal hour angle"), radToDm(data["object_sha_rad"]), withTables);
+	oss << oneRowTwoCells(qc_("DEC", "declination, celestial coordinate system"), radToDm(data["object_dec_rad"]), withTables);
+	oss << oneRowTwoCells(qc_("GHA", "greenwich hour angle of selected object"), radToDm(data["gha_rad"]), withTables);
+	oss << oneRowTwoCells(qc_("LHA", "local hour angle of selected object"), radToDm(data["lha_rad"]), withTables);
+	oss << oneRowTwoCells(qc_("Hc/Zn", "celestial navigation coordinate system, Hc altitude computed and Zn is azimuth computed"),
+		radToDm(data["Hc_rad"]) + "/" + radToDm(data["Zn_rad"]), withTables);
 
 	if (withTables)
 		oss << "</table>";
@@ -209,6 +155,7 @@ void AstroNav::getCelestialNavData(StelCore* core, StelObjectP
 	double lat_rad = lat * M_PI / 180.;
 	map["lat_deg"] = lat;
 	map["lat_rad"] = lat_rad;
+
 	double lon = static_cast<double>(core->getCurrentLocation().longitude);
 	double lon_rad = lon * M_PI / 180.;
 	map["lon_deg"] = lon_rad;
@@ -247,13 +194,15 @@ void AstroNav::getCelestialNavData(StelCore* core, StelObjectP
 
 	double az, alt;
 	StelUtils::rectToSphe(&az,&alt,selectedObject->getAltAzPosGeometric(core));
-	if (az > (2 * M_PI)) az -= (2 * M_PI);
+	if (az > (2 * M_PI)) 
+		az -= (2 * M_PI);
 	map["az_rad"] = az;
 	map["alt_rad"] = alt;
 
 	double az_app, alt_app;
 	StelUtils::rectToSphe(&az_app,&alt_app,selectedObject->getAltAzPosApparent(core));
-	if (az_app > (2 * M_PI)) az_app -= (2 * M_PI);
+	if (az_app > (2 * M_PI)) 
+		az_app -= (2 * M_PI);
 	map["az_app_rad"] = az_app;
 	map["alt_app_rad"] = alt_app;
 
@@ -266,9 +215,7 @@ void AstroNav::getCelestialNavData(StelCore* core, StelObjectP
 		            (std::cos(object_dec) * std::sin(lat_rad) * std::cos(lha));
 	Zn = std::acos(Zn / std::cos(Hc));
 	if (lha < M_PI) 
-	{
 		Zn = (2*M_PI) - Zn;
-	}
 	map["Zn_rad"] = Zn;
 }
 
@@ -341,6 +288,36 @@ void AstroNav::markNavstars(StelCore* core, StelProjectorP projector, Vec3d colo
 				}
 		}
 	}
+}
+
+QString AstroNav::oneRowTwoCells(const QString& a, const QString& b, bool w, QString c)
+{
+	QString rval;
+	if (w) {
+		rval += "<tr><td>:" + a + "</td><td>" + b + c + "</td></tr>";
+	}
+	else {
+		rval += a + ": " + b + c + "<br/>";
+	}
+	return rval;
+}
+
+QString AstroNav::oneRowTwoCells(const QString& a, double b, bool w, QString c)
+{
+	QString rval;
+	QString temp;
+	QTextStream oss(&temp);
+	oss.setRealNumberNotation(QTextStream::FixedNotation);
+	oss.setRealNumberPrecision(3);
+	oss << b;
+	if (w) {
+
+		rval += "<tr><td>:" + a + "</td><td>" + oss.string() + c + "</td></tr>";
+	}
+	else {
+		rval += a + ": " + oss.string() + c + "<br/>";
+	}
+	return rval;
 }
 
 double AstroNav::getCallOrder(StelModuleActionName actionName) const

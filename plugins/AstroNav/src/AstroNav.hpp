@@ -124,6 +124,10 @@ private:
 	//! Ensure value is between zero and 360 degrees.
 	double wrap360(double d);
 
+	//! Create a single information string from two string values.
+	QString oneRowTwoCells(const QString& a, const QString& b, bool w, QString c = "");	
+	QString oneRowTwoCells(const QString& a, double b, bool w, QString = "");
+
 	//! A fake method for strings marked for translation.
 	//! Use it instead of translations.h for N_() strings, except perhaps for
 	//! keyboard action descriptions. (It's better for them to be in a single
