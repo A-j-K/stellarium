@@ -102,7 +102,10 @@ void AstroNav::draw(StelCore* core)
 		QString extraInfo = extraInfoString(core, selectedObject);
 		if (!extraInfo.isEmpty())
 		{
-			selectedObject->setExtraInfoString(extraInfo);
+			// The following line causes a program crash with a "read access violation"
+			//selectedObject->setExtraInfoString(StelObject::OtherCoord, extraInfo);
+			// The following line doesn't crash, I have no idea why but this just looks wrong, shouldn't be "Script".
+			selectedObject->setExtraInfoString(StelObject::Script, extraInfo);
 		}
 	}
 }
