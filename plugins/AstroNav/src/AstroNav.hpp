@@ -96,7 +96,7 @@ public:
 
 	// Public API functions.
 	StelTextureSP getNavstarMarker() { return markerTexture; }
-	void getCelestialNavData(StelCore* core, StelObjectP stelObject, QMap<QString, double>& map);
+	void getCelestialNavData(const StelCore* core, const StelObjectP stelObject, QMap<QString, double>& map);
 
 signals:
 
@@ -106,20 +106,21 @@ private:
 	//! Whether to use HTML tables in info string
 	bool withTables;
 
+	void addExtraInfo(StelCore* p);
+
+	QString extraInfo;
+
 	//! Highlight the Nav stars on the display.
-	void markNavstars(StelCore* core, StelProjectorP projector, Vec3d colours = {1., 0., 0.}); 
+	void markNavstars(StelCore* core, Vec3d colours = {1., 0., 0.}); 
 
 	//! Create a list of Nav stars based on the current strategy.
 	void populateNavstarPointers(const QList<int>& hipNumbers);
 
 	//! Build the extra sinfo string.
-	QString extraInfoString(StelCore* core, StelObjectP selectedObject);
+	void extraInfoString(StelCore* core, const StelObjectP& selectedObject);
 
 	//! Convert an angle in radians to DM.m format.
 	QString radToDm(double rad, const QString pos = "+", const QString neg = "-");
-
-	//! Convert an angle in radians to a geodetic location.
-	//QString radToDmPos(double rad, QChar pos = 'N', QChar neg = 'S');
 
 	//! Ensure value is between zero and 2PI
 	double wrap2pi(double d);

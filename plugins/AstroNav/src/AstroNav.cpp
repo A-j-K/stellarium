@@ -84,85 +84,108 @@ void AstroNav::deinit()
 	markerTexture.clear();
 }
 
-void AstroNav::update(double deltaTime) {}
+void AstroNav::update(double deltaTime) 
+{
+	;
+}
 
 void AstroNav::draw(StelCore* core)
 {
 	if (0 == navstars.size() || "Earth" != core->getCurrentPlanet()->getEnglishName()) 
 		return;
 
-	markNavstars(core, core->getProjection(StelCore::FrameJ2000));
+	markNavstars(core);
+	addExtraInfo(core);
+}
 
-	bool isSource = StelApp::getInstance().getStelObjectMgr().getWasSelected();
+void AstroNav::addExtraInfo(StelCore *core)
+{
+	if (0 == navstars.size() || "Earth" != core->getCurrentPlanet()->getEnglishName()) 
+		return;
+
+	StelApp& stelApp = StelApp::getInstance();
+	bool isSource = stelApp.getStelObjectMgr().getWasSelected();
 
 	if (isSource) 
 	{
-		withTables = StelApp::getInstance().getFlagUseFormattingOutput();
-		StelObjectP selectedObject = StelApp::getInstance().getStelObjectMgr().getSelectedObject()[0];
-		QString extraInfo = extraInfoString(core, selectedObject);
-		if (!extraInfo.isEmpty())
-		{
-			// The following line causes a program crash with a "read access violation"
-			//selectedObject->setExtraInfoString(StelObject::OtherCoord, extraInfo);
-			// The following line doesn't crash, I have no idea why but this just looks wrong, shouldn't be "Script".
-			selectedObject->setExtraInfoString(StelObject::Script, extraInfo);
-		}
+		withTables = stelApp.getFlagUseFormattingOutput();
+		StelObjectP selectedObject = stelApp.getStelObjectMgr().getSelectedObject()[0];
+		extraInfoString(core, selectedObject);
 	}
 }
 
-QString AstroNav::extraInfoString(StelCore* core, StelObjectP selectedObject)
+void AstroNav::extraInfoString(StelCore* core, const StelObjectP& selectedObject)
 {
-	QString output = "", extraText, degreesSymbol;
+	QString extraText = "";
+	QString ariesSymbol = "&#9800;";
 	QMap<QString, double> data;
 	QString englishName = selectedObject->getEnglishName();
+	StelObject::InfoStringGroup infoGroup = StelObject::OtherCoord;
+
 	getCelestialNavData(core, selectedObject, data);
+
 	if ("Sun" == englishName || "Moon" == englishName) 
 	{
 		double d = selectedObject->getAngularSize(core);
 		data["alt_app_rad"] += ((d/2)*M_PI)/180.; 
-		extraText = " " + QString(qc_("(lower limb)", "the lowest part of the Sun/Moon"));
+		extraText = " " + QString(qc_("(lower limb)", "the lowest part of the Sun or Moon"));
 	}
 
-	if (withTables)
-		output += "<table>";
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("UTC", "universal coordinated time"), 
+			StelMainScriptAPI::getDate("utc")));
 
-	degreesSymbol += QChar(0x00B0);
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("Ho", "horizontal coordinate system, altitude measured via a sextant"), 
+			radToDm(data["alt_app_rad"]) + extraText));
 
-	output += oneRowTwoCells(qc_("UTC", "universal coordinated time"), 
-		StelMainScriptAPI::getDate("utc"));
-	output += oneRowTwoCells(qc_("Ho", "altitude measured via a sextant"), 
-		radToDm(data["alt_app_rad"]) + extraText);
-	output += oneRowTwoCells(qc_("Pos", "geodetic cordinate system"), 
-		radToDm(data["lat_rad"], "N", "S") + "/" + radToDm(data["lon_rad"], "E", "W"));
-	output += oneRowTwoCells(qc_("GMST", "greenwich mean sidereal time (ERA)"), 
-		QString::number(data["gmst_deg"], 'f', 3), degreesSymbol);
-	output += oneRowTwoCells(qc_("LMST", "local mean sidereal time"), 
-		QString::number(data["lmst_deg"], 'f', 3), degreesSymbol);
-	output += oneRowTwoCells(qc_("GHA", "first point of aries greenwich hour angle") + "&#9800;", 
-		radToDm(data["gmst_rad"]));
-	output += oneRowTwoCells(qc_("SHA", "sidereal hour angle"), 
-		radToDm(data["object_sha_rad"]));
-	output += oneRowTwoCells(qc_("DEC", "celestial coordinate system"), 
-		radToDm(data["object_dec_rad"]));
-	output += oneRowTwoCells(qc_("GHA", "greenwich hour angle"), 
-		radToDm(data["gha_rad"]));
-	output += oneRowTwoCells(qc_("LHA", "local hour angle"), 
-		radToDm(data["lha_rad"]));	
-	//! TRANSLATORS: This is the navigation computed altitude
-	output += oneRowTwoCells(qc_("Hc", "horizontal coordinate system, altitude"),
-		radToDm(data["Hc_rad"]));
-	//! TRANSLATORS: This is the navigation computed azimuth
-	output += oneRowTwoCells(qc_("Zn", "horizontal coordinate system, azimuth"),
-		radToDm(data["Zn_rad"]));
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("GMST", "greenwich mean sidereal time (ERA)"), 
+			QString("%1%2").arg(QString::number(data["gmst_deg"], 'f', 3)).arg("&deg;")));
 
-	if (withTables)
-		output += "</table>";
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("LMST", "local mean sidereal time"), 
+			QString("%1%2").arg(QString::number(data["lmst_deg"], 'f', 3)).arg("&deg;")));
 
-	return output;
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("GHA", "first point of aries greenwich hour angle") + ariesSymbol, 
+			radToDm(data["gmst_rad"])));
+
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("SHA", "sidereal hour angle"), 
+			radToDm(data["object_sha_rad"])));
+
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("DEC", "celestial coordinate system"), 
+			radToDm(data["object_dec_rad"])));
+
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("GHA", "greenwich hour angle"), 
+			radToDm(data["gha_rad"])));
+
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("LHA", "local hour angle"), 
+			radToDm(data["lha_rad"])));
+
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("Lat", "geodetic cordinate system, latitude"), 
+			radToDm(data["lat_rad"], "N", "S")));	
+
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("Lon", "geodetic cordinate system, longitude"), 
+			radToDm(data["lon_rad"], "E", "W")));	
+
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("Hc", "horizontal coordinate system, computed altitude"),
+			radToDm(data["Hc_rad"])));
+
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("Zn", "horizontal coordinate system, computed azimuth"),
+			radToDm(data["Zn_rad"])));
 }
 
-void AstroNav::getCelestialNavData(StelCore* core, StelObjectP 
-	selectedObject, QMap<QString, double>& map)
+void AstroNav::getCelestialNavData(const StelCore* core, 
+	const StelObjectP selectedObject, QMap<QString, double>& map)
 {
 	double lat = static_cast<double>(core->getCurrentLocation().latitude);
 	double lat_rad = lat * M_PI / 180.;
@@ -257,19 +280,20 @@ QString AstroNav::radToDm(double rad, const QString pos, const QString neg)
 	md += (s / 60.);
 	rval += (sign ? pos : neg)
 		+ QString::number(d, 'f', 0)
-		+ QChar(0x00B0)
+		+ QString("&deg;")
 		+ QString::number(md, 'f', 1)
 		+ "'";
 	return rval;
 }
 
-void AstroNav::markNavstars(StelCore* core, StelProjectorP projector, Vec3d colours)
+void AstroNav::markNavstars(StelCore* core, Vec3d colours)
 {
 	int numOfStars = navstars.size();
 	if (numOfStars > 0 && !markerTexture.isNull())
 	{
 		Vec3d pos;
-		StelPainter painter(projector);
+		StelProjectorP p = core->getProjection(StelCore::FrameJ2000);
+		StelPainter painter(p);
 		float mlimit = core->getSkyDrawer()->getLimitMagnitude();
 		for (auto itor = navstars.begin(); itor != navstars.end(); ++itor)
 		{
@@ -277,7 +301,7 @@ void AstroNav::markNavstars(StelCore* core, StelProjectorP projector, Vec3d colo
 			if (pNavStar->getVMagnitude(core) < mlimit)
 			{
 				Vec3d cpos = pNavStar->getJ2000EquatorialPos(core);
-				if (projector->projectCheck(cpos, pos))
+				if (p->projectCheck(cpos, pos))
 				{
 					painter.setBlending(true);
 					painter.setColor(colours[0], colours[1], colours[2]);
@@ -316,15 +340,17 @@ double AstroNav::getCallOrder(StelModuleActionName actionName) const
 	return 0;
 }
 
+//! Implementation of unused required virtual function
 //! Used to get a list of objects which are near to some position.
-//! @return a list containing the exoplanets located inside the limitFov circle around position v.
+//! @return a list containing nothing.
 QList<StelObjectP> AstroNav::searchAround(const Vec3d& v, double limitFov, const StelCore* core) const
 {
 	QList<StelObjectP> rval;
 	return rval;
 }
 
-//! @param nameI18n The case in-sensitive localized exoplanet system name
+//! Implementation of unused required virtual function
+//! @param nameI18n Unused.
 StelObjectP AstroNav::searchByNameI18n(const QString& nameI18n) const
 {
 	int numOfStars = navstars.size();
@@ -340,7 +366,8 @@ StelObjectP AstroNav::searchByNameI18n(const QString& nameI18n) const
 	return StelObjectP(Q_NULLPTR);
 }
 
-//! @param name The case in-sensitive english Navstar system name
+//! Implementation of unused required virtual function
+//! @param name Unused
 StelObjectP AstroNav::searchByName(const QString& englishName) const
 {
 	int numOfStars = navstars.size();
@@ -356,6 +383,7 @@ StelObjectP AstroNav::searchByName(const QString& englishName) const
 	return StelObjectP(Q_NULLPTR);
 }
 
+//! Implementation of unused required virtual function
 //! @param id The Navstar system id
 StelObjectP AstroNav::searchByID(const QString& id) const
 {
@@ -363,6 +391,7 @@ StelObjectP AstroNav::searchByID(const QString& id) const
 	return rval;
 }
 
+//! Implementation of unused required virtual function
 QStringList AstroNav::listAllObjects(bool inEnglish) const
 {
 	QStringList list;
