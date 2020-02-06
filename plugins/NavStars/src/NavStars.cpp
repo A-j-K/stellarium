@@ -33,6 +33,7 @@
 #include "StelUtils.hpp"
 #include "NavStars.hpp"
 #include "NavStarsWindow.hpp"
+#include "NavStarsCalc.hpp"
 #include "NavStarsCalculator.hpp"
 #include "Planet.hpp"
 #include <StelMainScriptAPI.hpp>
@@ -458,9 +459,17 @@ void NavStars::extraInfo(StelCore* core, const StelObjectP& selectedObject, bool
 	double jd, jde, x = 0., y = 0.;
 	QString extraText = "", englishName = selectedObject->getEnglishName();
 
+	NavStarsCalcInputs inputs;
+	inputs.julianDate = core->getJD();
+	inputs.latitudeDeg = core->getCurrentLocation().latitude;
+	inputs.longitudeDeg = core->getCurrentLocation().longitude;
+	
+
 	jd  = core->getJD();
 	jde = core->getJDE();
 
+
+	
 	NavStarsCalculator calc;
 	calc.setUTC(StelMainScriptAPI::getDate("utc"))
 		.setLatDeg(core->getCurrentLocation().latitude)
@@ -472,16 +481,25 @@ void NavStars::extraInfo(StelCore* core, const StelObjectP& selectedObject, bool
 	StelUtils::rectToSphe(&x, &y, selectedObject->getEquinoxEquatorialPosApparent(core));	
 	calc.setRaRad(x)
 		.setDecRad(y);
+	inputs.rightAscensionRad = x;
+	inputs.declinationRad = y;
 
 	StelUtils::rectToSphe(&x,&y,selectedObject->getAltAzPosGeometric(core)); 
 	calc.setAzRad(x)
 		.setAltRad(y);
+	inputs.azimuthRad = x;
+	inputs.altitudeRad = y;
 
 	StelUtils::rectToSphe(&x,&y,selectedObject->getAltAzPosApparent(core)); 
 	calc.setAzAppRad(x)
 		.setAltAppRad(y);
 
 	calc.execute();
+
+	NavStarsCalc c;
+	NavStarsCalcOutputs outputs;
+	c.execute(inputs, outputs);
+
 
 	if ("Sun" == englishName || "Moon" == englishName) 
 	{
@@ -496,7 +514,10 @@ void NavStars::extraInfo(StelCore* core, const StelObjectP& selectedObject, bool
 	}
 
 	if (tabulatedDisplay)
+	{
 		displayTabulatedInfo(selectedObject, calc, extraText);
+		displayTabulatedInfo2(selectedObject, outputs, extraText);
+	}
 	else
 		displayStandardInfo(selectedObject, calc, extraText);
 }
@@ -553,6 +574,37 @@ void NavStars::displayTabulatedInfo(const StelObjectP& selectedObject, NavStarsC
 		oneRowTwoCells(qc_("Zn", "Navigation/horizontal coordinate system, calculated azmiuth"), calc.znPrintable()));
 }
 
+#if 1
+void NavStars::displayTabulatedInfo2(const StelObjectP& selectedObject, NavStarsCalcOutputs& o, const QString& extraText)
+{
+	StelObject::InfoStringGroup infoGroup = StelObject::OtherCoord;
+	//selectedObject->addToExtraInfoString(infoGroup, 
+	//	oneRowTwoCells(qc_("Break", "Navigation/horizontal coordinate system, sextant measured altitude"), "FOO"));
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("Ho2", "Navigation/horizontal coordinate system, sextant measured altitude"), o.Ho() + extraText));
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("GHA2", "Greenwich hour angle, first point of Aries") + "&#9800;",  o.gmst()));	
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("LMST2", "local hour angle"), o.lmst()));
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("SHA2", "object sidereal hour angle (ERA, Earth rotation angle)"), o.sha()));
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("GHA2", "greenwich hour angle"), o.gha()));
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("DEC2", "declination"), o.dec()));
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("LHA2", "local hour angle"), o.lha()));
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("LAT2", "geodetic coordinate system, latitude"), o.lat()));
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("LON2", "geodetic coordinate system, longitude"), o.lon()));
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("Hc2", "Navigation/horizontal coordinate system, calculated altitude"), o.Hc()));
+	selectedObject->addToExtraInfoString(infoGroup, 
+		oneRowTwoCells(qc_("Zn2", "Navigation/horizontal coordinate system, calculated azmiuth"), o.Zn()));
+}
+#endif
+
 QString NavStars::oneRowTwoCells(const QString& a, const QString& b)
 {
 	QString rval;
@@ -564,6 +616,24 @@ QString NavStars::oneRowTwoCells(const QString& a, const QString& b)
 	}
 	return rval;
 }
+
+QString NavStars::radToDm(double rad, const QString pos, const QString neg)
+{
+	QString rval;
+	bool sign;
+	double s, md;
+	unsigned int d, m;
+	StelUtils::radToDms(rad, sign, d, m, s);
+	md = static_cast<double>(m);
+	md += (s / 60.);
+	rval += (sign ? pos : neg)
+		+ QString::number(d, 'f', 0)
+		+ QString("&deg;")
+		+ QString::number(md, 'f', 1)
+		+ "'";
+	return rval;
+}
+
 
 bool NavStars::isPermittedObject(const QString& s)
 {

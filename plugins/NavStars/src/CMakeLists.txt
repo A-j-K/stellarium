@@ -10,6 +10,8 @@ LINK_DIRECTORIES(${BUILD_DIR}/src)
 SET(NavStars_SRCS
      NavStars.hpp
      NavStars.cpp
+     NavStarsCalc.hpp
+     NavStarsCalc.cpp
      NavStarsCalculator.hpp
      NavStarsCalculator.cpp
      gui/NavStarsWindow.hpp

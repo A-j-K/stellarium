@@ -17,8 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Suite 500, Boston, MA  02110-1335, USA.
  */
 
+#include "StelUtils.hpp"
+#include "planetsephems/sidereal_time.h"
+
 #include "test/testNavStars.hpp"
 #include "NavStarsCalculator.hpp"
+
+#include <cmath>
 
 #include <QMap>
 #include <QDebug>
@@ -113,4 +118,7 @@ void TestNavStars::TestAgainstAlmancVega()
 
 	performTest(QString("2020-01-13T07:12:34"), inputs, expects, false);
 }
+
+// 2458884.473255
+
 

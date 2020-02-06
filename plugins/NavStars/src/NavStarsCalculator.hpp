@@ -52,9 +52,6 @@ file (section [NavigationalStars]).
 #define RAD2DEG(x) ((x * 180.) / M_PI)
 #endif
 
-//! Forward declaration for UT inputter.
-struct NavStarCalculatorDegreeInputs;
-
 //! @class NavStarsCalculator
 //! @author Andy Kirkham
 //! @ingroup navigationalStars
@@ -62,7 +59,6 @@ class NavStarsCalculator
 {
 public:	
     NavStarsCalculator();
-    NavStarsCalculator(const NavStarCalculatorDegreeInputs* ip);
     ~NavStarsCalculator();
 
     //! Calculate intermediates.
@@ -93,8 +89,6 @@ public:
     QString getUTC() {
         return utc;
     }
-
-    QMap<QString, QString> printable();
 
 private:
     double lmst;
@@ -199,6 +193,9 @@ public:
         az_rad = d;
         return *this;
     }
+    NavStarsCalculator& setAzDeg(double d) {
+        return setAzRad(DEG2RAD(d));
+    }
 
 private:
     double alt_rad;
@@ -207,6 +204,9 @@ public:
         alt_rad = d;
         return *this;
     }
+    NavStarsCalculator& setAltDeg(double d) {
+        return setAltRad(DEG2RAD(d));
+    }
     
 private:
     double az_app_rad;
@@ -214,6 +214,9 @@ public:
     NavStarsCalculator& setAzAppRad(double d) {
         az_app_rad = d;
         return *this;
+    }
+    NavStarsCalculator& setAzAppDeg(double d) {        
+        return setAzAppRad(DEG2RAD(d));
     }
     QString azAppPrintable() {
         return radToDm(az_app_rad);
@@ -225,6 +228,9 @@ public:
     NavStarsCalculator& setAltAppRad(double d) {
         alt_app_rad = d;
         return *this;
+    }
+    NavStarsCalculator& setAltAppDeg(double d) {
+        return setAltAppRad(DEG2RAD(d));
     }
     QString altAppPrintable() {
         return radToDm(alt_app_rad);
@@ -259,6 +265,9 @@ public:
         dec_rad = d;
         return *this;
     }
+    NavStarsCalculator& setDecDeg(double d) {
+        return setDecRad(DEG2RAD(d));
+    }
     QString decPrintable() {
         return radToDm(dec_rad);
     }
@@ -271,25 +280,12 @@ public:
         sha_rad = (2. * M_PI) - ra_rad;
         return *this;
     }
-};
-
-// When exactly does code to support Unit Testing become intrusive?
-// I've done worse than this before so it's not all that bad.
-// See specialised constructor above.
-struct NavStarCalculatorDegreeInputs
-{
-    QString utc;
-    double ra;
-    double dec;
-    double lat;
-    double lon;
-    double jd;
-    double jde;
-    double gmst;
-    double az;
-    double alt;
-    double az_app;
-    double alt_app;
+    NavStarsCalculator& setRaDeg(double d) {
+        return setRaRad(DEG2RAD(d));
+    }
+    QString raPrintable() {
+        return radToDm(ra_rad);
+    }
 };
 
 #endif /* NAVSTARSCALCULATOR_HPP */

@@ -27,6 +27,7 @@
 
 #include <QSettings>
 
+#include "NavStarsCalc.hpp"
 #include "NavStarsCalculator.hpp"
 
 class StelButton;
@@ -158,6 +159,7 @@ public slots:
 	//! Used to display the extraInfoStrings in tabulated form more suited to students of CN
 	//! as found when using Nautical Almanacs.
 	void displayTabulatedInfo(const StelObjectP& selectedObject, NavStarsCalculator& calc, const QString& extraText);
+	void displayTabulatedInfo2(const StelObjectP& selectedObject, NavStarsCalcOutputs& o, const QString& extraText);
 
 	//! Given two QStrings return in a format consistent with the
 	//! property setting of "withTables".
@@ -165,6 +167,8 @@ public slots:
 	//! @param QString b The cell right value
 	//! @return QString The representation of the extraString info.
     QString oneRowTwoCells(const QString& a, const QString& b);
+
+	QString radToDm(double rad, const QString pos = "+", const QString neg = "-");
 
 	bool isPermittedObject(const QString& s);
 
