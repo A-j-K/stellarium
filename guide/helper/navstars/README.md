@@ -1,0 +1,132 @@
+# Helpers and tools for NavStars user Guide
+
+## Notes.
+
+## Sample location: 
+N 46°46'12.3" W 24°35'44.2"
+
+## Selected Nav stars and details
+
+Shedar
+2020-02-08T19:20:25
+Ho   +67  28.7
+GHAa +68  28.7
+LMST +43  53.0
+SHA  +349 34.8
+GHA  +58   3.5
+DEC  +56  38.9
+GP   N56  38.9 W80.233  56.6483 -80.233
+LHA  +33  27.8
+LAT  N46  46.2
+LON  W24  35.7
+Hc   +67  20.0
+Zn   +308 7.9
+Distance 5683 km
+
+Capella
+2020-02-08T19:20:25
+Ho   +65  28.7
+GHAa +68  28.7
+LMST +43  53.0
+SHA  +280 27.0
+GHA  +348 55.6
+DEC  +46   1.0
+GP   N46   1.0 E11 4.4  46.4867, E11.0733
+LHA  +324 19.9
+LAT  N46  46.2
+LON  W24  35.7
+Hc   +65  36.0
+Zn   +78  35.1
+Distance: 5624km
+
+Hamal
+2020-02-08T19:20:25
+Ho   +64  56.3
+GHAa +68  28.7
+LMST +43  53.0
+SHA  +327 55.1
+GHA  +36  23.8
+DEC  +23  33.5
+GP   N23  33.5 W58.57
+LHA  +11  48.0
+LAT  N46  46.2
+LON  W24  35.7
+Hc   +64  55.8
+Zn   +206 15.4
+
+
+
+Polux
+2020-02-08T19:10:24
+Ho   +29 44.0
+GHAa +65 57.8
+LMST +41 22.1
+SHA  +243 21.6
+GHA  +309 19.4
+DEC  +27  58.5  Lon 260 8.0 - 180 = 80 8.0
+GP   E80 8.0 N27 58.5 E80 8.0
+LHA  +284 43.7
+LAT  N46  46.2
+LON  W24  35.7
+Hc   +29  42.4
+Zn   +79  32.4
+Distance 11860km
+
+
+Venus
+2020-02-08T19:11:30
+Ho   +31  30.6
+GHAa +66  14.4
+LMST +41  38.7
+SHA  +358 46.8
+GHA  +65  1.2
+DEC  +0   3.9  Lon 195 49.8    195.83
+LHA  +40  25.5
+LAT  N46  46.2
+LON  W24  35.7
+Hc   +31  28.9
+Zn   +229 29.8
+
+Rigel
+2020-02-08T19:11:30
+Ho   +25  53.2
+GHAa +66  14.4
+LMST +41  38.7
+SHA  +281 7.2
+GHA  +347 21.6
+DEC  -8   10.8   Lon 15.83
+LHA  +322 45.9
+LAT  N46  46.2
+LON  W24  35.7
+Hc   +25  51.3
+Zn   +138 16.5
+
+Deneb
+2020-02-08T19:12:41
+Ho   +30  27.9
+GHAa +66  32.2
+LMST +41  56.6
+SHA  +49  28.1
+GHA  +116 0.2
+DEC  +45  21.3 Lon 
+LHA  +91  24.5
+LAT  N46  46.2
+LON  W24  35.7
+Hc   +30  26.1
+Zn   +305 26.1
+
+Alpheratz
+2020-02-08T19:15:41
+Ho   +54  14.0
+GHAa +67  17.4
+LMST +42  41.6
+SHA  +357 38.3
+GHA  +64  55.7
+DEC  +29  12.2 Lon 64 55.5
+LHA  +40  19.9
+LAT  N46  46.2
+LON  W24  35.7
+Hc   +54  13.1
+Zn   +255 4.2
+
+

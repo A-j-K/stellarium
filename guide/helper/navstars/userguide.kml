@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Paths</name>
+    <description></description>
+    <Style id="apStyle">
+      <LineStyle>
+        <color>5014F01E</color>
+        <width>6</width>
+      </LineStyle>
+    </Style>
+	<Style id="poluxStyle">
+      <LineStyle>
+        <color>500078F0</color>
+        <width>6</width>
+      </LineStyle>
+    </Style>	
+	<Style id="venusStyle">
+      <LineStyle>
+        <color>5014F0FF</color>
+        <width>6</width>
+      </LineStyle>
+    </Style>
+	<Style id="denebStyle">
+      <LineStyle>
+        <color>50FF7800</color>
+        <width>6</width>
+      </LineStyle>
+    </Style>
+	<Style id="epStyle">
+      <LineStyle>
+        <color>50FFFFFF</color>
+        <width>6</width>
+      </LineStyle>
+    </Style>
+	<Style id="redBearingStyle">
+      <LineStyle>
+        <color>501400FF</color>
+        <width>4</width>
+      </LineStyle>
+    </Style>	
+	<Style id="redBearingThickStyle">
+      <LineStyle>
+        <color>501400FF</color>
+        <width>8</width>
+      </LineStyle>
+    </Style>	
+    <Placemark>
+      <name>AP</name>
+      <description>Assumed Position</description>
+      <styleUrl>#apStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>absolute</altitudeMode>
+        <coordinates> 		  
+		  -46.77008333,24.59561111,0
+          -46.77008333,24.59561111,5000000
+        </coordinates>
+      </LineString>
+    </Placemark>
+	<Placemark>
+      <name>EP</name>
+      <description>Ground point - North Pole</description>
+	  <styleUrl>#epStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>absolute</altitudeMode>
+        <coordinates> 		  
+		  0,90,0
+          0,90,5000000
+        </coordinates>
+      </LineString>
+    </Placemark>
+	<Placemark>
+      <name>Polux</name>
+      <description>Ground point</description>
+	  <styleUrl>#poluxStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>absolute</altitudeMode>
+        <coordinates> 		  
+		  +80.133333,27.975000,0
+          +80.133333,27.975000,5000000
+        </coordinates>
+      </LineString>
+    </Placemark>
+	<Placemark>
+      <name>Rigel</name>
+      <description>Ground point</description>
+	  <styleUrl>#venusStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>absolute</altitudeMode>
+        <coordinates> 		  
+		  -15.83,-8.18,0
+          -15.83,-8.18,5000000
+        </coordinates>
+      </LineString>
+    </Placemark>
+	<Placemark>
+      <name>Alpheratz</name>
+      <description>Ground point</description>
+	  <styleUrl>#denebStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>absolute</altitudeMode>
+        <coordinates> 		  
+		  -64.92,29.203,0
+          -64.92,29.203,5000000
+        </coordinates>
+      </LineString>
+    </Placemark>
+	<Placemark>
+      <name>Deneb</name>
+      <description>Ground point</description>
+	  <styleUrl>#denebStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>absolute</altitudeMode>
+        <coordinates> 		  
+		  -115.998,45.355,0
+          -115.998,45.355,5000000
+        </coordinates>
+      </LineString>
+    </Placemark>
+	<Placemark>
+      <name>AP to Polux</name>
+      <description>Ground point</description>
+	  <styleUrl>#redBearingThickStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates> 
+		  -46.77008333,24.59561111,0
+		  +80.133333,27.975000,0
+        </coordinates>
+      </LineString>
+    </Placemark>
+	<Placemark>
+      <name>AP to EP</name>
+      <description>Ground point</description>
+	  <styleUrl>#redBearingStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates> 
+		  -46.77008333,24.59561111,0
+		  +0,90,0
+        </coordinates>
+      </LineString>
+    </Placemark>
+	<Placemark>
+      <name>Polux to EP</name>
+      <description>Ground point</description>
+	  <styleUrl>#redBearingStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates> 
+		  +80.133333,27.975000,0
+		  +0,90,0
+        </coordinates>
+      </LineString>
+    </Placemark>
+	<Placemark>
+      <name>AP to Rigel</name>
+      <description>Ground point</description>
+	  <styleUrl>#redBearingThickStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates> 
+		  -15.83,-8.18,0
+		  -46.77008333,24.59561111,0		  
+        </coordinates>
+      </LineString>
+    </Placemark>
+	<Placemark>
+      <name>AP to Alpheratz</name>
+      <description>Ground point</description>
+	  <styleUrl>#redBearingThickStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates> 
+		  -46.77008333,24.59561111,0
+		  -64.92,29.203,0
+        </coordinates>
+      </LineString>
+    </Placemark>
+	<Placemark>
+      <name>AP to Deneb</name>
+      <description>Ground point</description>
+	  <styleUrl>#redBearingThickStyle</styleUrl>
+      <LineString>
+        <extrude>1</extrude>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates> 
+		  -46.77008333,24.59561111,0
+		  -115.998,45.355,0
+        </coordinates>
+      </LineString>
+    </Placemark>
+  </Document>
+  
+  
+  
+</kml>
