@@ -1,0 +1,11 @@
+
+core.setObserverLocation("User Guide");
+LandscapeMgr.setCurrentLandscapeName("Ocean");
+LandscapeMgr.setFlagLandscape(true);
+LandscapeMgr.setFlagAtmosphere(true);
+GridLinesMgr.setFlagHorizonLine(true);
+LandscapeMgr.setFlagCardinalsPoints(true);
+core.setDate("2020-02-08T19:30:00");
+core.setTimeRate(0);
+core.selectObjectByName("Shedar", true);
+StelMovementMgr.setFlagTracking(true);

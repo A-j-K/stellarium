@@ -3,27 +3,49 @@
   <Document>
     <name>Paths</name>
     <description></description>
-    <Style id="apStyle">
+	
+	<Style id="redThick">
       <LineStyle>
-        <color>5014F01E</color>
+        <color>501400FF</color>
         <width>6</width>
       </LineStyle>
     </Style>
-	<Style id="poluxStyle">
+	<Style id="redThin">
       <LineStyle>
-        <color>500078F0</color>
+        <color>501400FF</color>
+        <width>4</width>
+      </LineStyle>
+    </Style>
+	
+	<Style id="grnThick">
+      <LineStyle>
+        <color>5000FF14</color>
         <width>6</width>
       </LineStyle>
-    </Style>	
-	<Style id="venusStyle">
+    </Style>
+	<Style id="grnThin">
+      <LineStyle>
+        <color>5000FF14</color>
+        <width>4</width>
+      </LineStyle>
+    </Style>
+	
+	<Style id="yelThick">
       <LineStyle>
         <color>5014F0FF</color>
         <width>6</width>
       </LineStyle>
     </Style>
-	<Style id="denebStyle">
+	<Style id="yelThin">
       <LineStyle>
-        <color>50FF7800</color>
+        <color>5014F0E6</color>
+        <width>4</width>
+      </LineStyle>
+    </Style>
+	
+    <Style id="apStyle">
+      <LineStyle>
+        <color>50FF78F0</color>
         <width>6</width>
       </LineStyle>
     </Style>
@@ -33,18 +55,13 @@
         <width>6</width>
       </LineStyle>
     </Style>
-	<Style id="redBearingStyle">
+	<Style id="epStyleThin">
       <LineStyle>
-        <color>501400FF</color>
+        <color>50FFFFFF</color>
         <width>4</width>
       </LineStyle>
-    </Style>	
-	<Style id="redBearingThickStyle">
-      <LineStyle>
-        <color>501400FF</color>
-        <width>8</width>
-      </LineStyle>
-    </Style>	
+    </Style>
+		
     <Placemark>
       <name>AP</name>
       <description>Assumed Position</description>
@@ -59,6 +76,7 @@
         </coordinates>
       </LineString>
     </Placemark>
+	
 	<Placemark>
       <name>EP</name>
       <description>Ground point - North Pole</description>
@@ -73,80 +91,72 @@
         </coordinates>
       </LineString>
     </Placemark>
+	
 	<Placemark>
-      <name>Polux</name>
+      <name>Hamal</name>
       <description>Ground point</description>
-	  <styleUrl>#poluxStyle</styleUrl>
+	  <styleUrl>#redThick</styleUrl>
       <LineString>
         <extrude>1</extrude>
         <tessellate>1</tessellate>
         <altitudeMode>absolute</altitudeMode>
-        <coordinates> 		  
-		  +80.133333,27.975000,0
-          +80.133333,27.975000,5000000
+        <coordinates> 
+		  -38.795,23.558,0
+          -38.795,23.558,5000000
         </coordinates>
       </LineString>
     </Placemark>
+	
 	<Placemark>
-      <name>Rigel</name>
+      <name>Shedar</name>
       <description>Ground point</description>
-	  <styleUrl>#venusStyle</styleUrl>
+	  <styleUrl>#grnThick</styleUrl>
       <LineString>
         <extrude>1</extrude>
         <tessellate>1</tessellate>
         <altitudeMode>absolute</altitudeMode>
-        <coordinates> 		  
-		  -15.83,-8.18,0
-          -15.83,-8.18,5000000
+        <coordinates> 	
+		  -60.457,56.649,0
+          -60.457,56.649,5000000
         </coordinates>
       </LineString>
     </Placemark>
+	
 	<Placemark>
-      <name>Alpheratz</name>
+      <name>Capella</name>
       <description>Ground point</description>
-	  <styleUrl>#denebStyle</styleUrl>
+	  <styleUrl>#yelThick</styleUrl>
       <LineString>
         <extrude>1</extrude>
         <tessellate>1</tessellate>
         <altitudeMode>absolute</altitudeMode>
-        <coordinates> 		  
-		  -64.92,29.203,0
-          -64.92,29.203,5000000
+        <coordinates> 	
+		  +8.674,46.016,0
+          +8.674,46.016,5000000
         </coordinates>
       </LineString>
     </Placemark>
+	
+	
 	<Placemark>
-      <name>Deneb</name>
+      <name>AP to Hamal</name>
       <description>Ground point</description>
-	  <styleUrl>#denebStyle</styleUrl>
-      <LineString>
-        <extrude>1</extrude>
-        <tessellate>1</tessellate>
-        <altitudeMode>absolute</altitudeMode>
-        <coordinates> 		  
-		  -115.998,45.355,0
-          -115.998,45.355,5000000
-        </coordinates>
-      </LineString>
-    </Placemark>
-	<Placemark>
-      <name>AP to Polux</name>
-      <description>Ground point</description>
-	  <styleUrl>#redBearingThickStyle</styleUrl>
+	  <styleUrl>#redThin</styleUrl>
       <LineString>
         <extrude>1</extrude>
         <tessellate>1</tessellate>
         <altitudeMode>clampToGround</altitudeMode>
         <coordinates> 
 		  -46.77008333,24.59561111,0
-		  +80.133333,27.975000,0
+		  -38.795,23.558,0
         </coordinates>
       </LineString>
     </Placemark>
+	
 	<Placemark>
       <name>AP to EP</name>
       <description>Ground point</description>
-	  <styleUrl>#redBearingStyle</styleUrl>
+	  <styleUrl>#epStyleThin</styleUrl>
       <LineString>
         <extrude>1</extrude>
         <tessellate>1</tessellate>
@@ -157,62 +167,77 @@
         </coordinates>
       </LineString>
     </Placemark>
+	
 	<Placemark>
-      <name>Polux to EP</name>
+      <name>Capella to EP</name>
       <description>Ground point</description>
-	  <styleUrl>#redBearingStyle</styleUrl>
+	  <styleUrl>#epStyleThin</styleUrl>
       <LineString>
         <extrude>1</extrude>
         <tessellate>1</tessellate>
         <altitudeMode>clampToGround</altitudeMode>
         <coordinates> 
-		  +80.133333,27.975000,0
+		  +8.674,46.016,0
 		  +0,90,0
         </coordinates>
       </LineString>
     </Placemark>
+	
 	<Placemark>
-      <name>AP to Rigel</name>
+      <name>AP to Shedar</name>
       <description>Ground point</description>
-	  <styleUrl>#redBearingThickStyle</styleUrl>
+	  <styleUrl>#grnThin</styleUrl>
       <LineString>
         <extrude>1</extrude>
         <tessellate>1</tessellate>
         <altitudeMode>clampToGround</altitudeMode>
         <coordinates> 
-		  -15.83,-8.18,0
+		  -60.457,56.649,0
 		  -46.77008333,24.59561111,0		  
         </coordinates>
       </LineString>
     </Placemark>
+	
 	<Placemark>
-      <name>AP to Alpheratz</name>
+      <name>AP to Capella</name>
       <description>Ground point</description>
-	  <styleUrl>#redBearingThickStyle</styleUrl>
+	  <styleUrl>#yelThin</styleUrl>
       <LineString>
         <extrude>1</extrude>
         <tessellate>1</tessellate>
         <altitudeMode>clampToGround</altitudeMode>
         <coordinates> 
 		  -46.77008333,24.59561111,0
-		  -64.92,29.203,0
+		  +8.674,46.016,0
         </coordinates>
       </LineString>
     </Placemark>
-	<Placemark>
-      <name>AP to Deneb</name>
-      <description>Ground point</description>
-	  <styleUrl>#redBearingThickStyle</styleUrl>
+
+    <Placemark>
+     <name>Hamal - circle</name>
+      <styleUrl>#redThin</styleUrl>
       <LineString>
-        <extrude>1</extrude>
-        <tessellate>1</tessellate>
-        <altitudeMode>clampToGround</altitudeMode>
-        <coordinates> 
-		  -46.77008333,24.59561111,0
-		  -115.998,45.355,0
-        </coordinates>
+       <coordinates>-58.57,36.275231339546,0 -56.279752541598,36.094307190212,0 -54.086008063476,35.559463563127,0 -52.076887302643,34.693702029599,0 -50.325583881636,33.53294283865,0 -48.886757221942,32.123012784588,0 -47.795929629301,30.516384450237,0 -47.071147100268,28.769167498367,0 -46.715845844333,26.938635563588,0 -46.721978088721,25.081357133384,0 -47.072774482131,23.251850606088,0 -47.744860488202,21.5016151708,0 -48.709699581756,19.878382455366,0 -49.934486969059,18.425463769474,0 -51.382683536167,17.181113727604,0 -53.014387936175,16.17787978189,0 -54.786716126793,15.441950570163,0 -56.654305953225,14.992548416507,0 -58.57,14.841428660454,0 -60.485694046775,14.992548416507,0 -62.353283873207,15.441950570163,0 -64.125612063825,16.17787978189,0 -65.757316463833,17.181113727603,0 -67.205513030941,18.425463769474,0 -68.430300418244,19.878382455366,0 -69.395139511798,21.5016151708,0 -70.067225517868,23.251850606088,0 -70.418021911279,25.081357133384,0 -70.424154155667,26.938635563588,0 -70.068852899732,28.769167498367,0 -69.344070370699,30.516384450237,0 -68.253242778058,32.123012784588,0 -66.814416118364,33.53294283865,0 -65.063112697357,34.693702029599,0 -63.053991936524,35.559463563127,0 -60.860247458402,36.094307190212,0 -58.57,36.275231339546,0 </coordinates>
       </LineString>
     </Placemark>
+	
+    <Placemark>
+     <name>Capella - circle</name>
+      <styleUrl>#yelThin</styleUrl>
+      <LineString>
+       <coordinates>-168.9267,82.992048421118,0 141.33236510903,79.884403221141,0 119.55743655569,73.838153970615,0 108.01868138851,67.121194252594,0 100.03950695088,60.249564010099,0 93.563366078519,53.387845808916,0 87.784659852052,46.619411764027,0 82.316462283526,40.00466850717,0 76.939967727876,33.598505066621,0 71.513745661195,27.457181433927,0 65.936575994545,21.641714335649,0 60.131648999385,16.219694353327,0 54.040871651744,11.265975623823,0 47.624833390648,6.8621054707416,0 40.866215433413,3.0941097865061,0 33.774810660156,0.048238173897454,0 26.391875132759,-2.1954272556375,0 18.791033593854,-3.5709335908647,0 11.0733,-4.0345515788819,0 3.3555664061462,-3.5709335908647,0 -4.2452751327591,-2.1954272556375,0 -11.628210660156,0.048238173897457,0 -18.719615433413,3.0941097865061,0 -25.478233390648,6.8621054707416,0 -31.894271651744,11.265975623823,0 -37.985048999385,16.219694353327,0 -43.789975994545,21.641714335649,0 -49.367145661195,27.457181433927,0 -54.793367727876,33.598505066621,0 -60.169862283526,40.00466850717,0 -65.638059852052,46.619411764027,0 -71.416766078519,53.387845808916,0 -77.89290695088,60.249564010099,0 -85.872081388513,67.121194252594,0 -97.410836555686,73.838153970615,0 -119.18576510903,79.884403221141,0 -168.9267,82.992048421118,0 </coordinates>
+      </LineString>
+    </Placemark>
+
+    <Placemark>
+     <name>Shedar - circle</name>
+      <styleUrl>#grnThin</styleUrl>
+      <LineString>
+       <coordinates>99.767,83.278155175428,0 54.01134930683,81.022254250305,0 30.789320340161,76.356258412476,0 17.72618679217,71.033328139514,0 8.5542383953936,65.549753389276,0 1.1149521113439,60.076948110119,0 -5.4664538896324,54.702081886464,0 -11.608545396705,49.485711628857,0 -17.539629247787,44.479277149353,0 -23.397267970139,39.731526630365,0 -29.270211831701,35.291104487066,0 -35.217482054339,31.207446460313,0 -41.27732802055,27.530683702182,0 -47.471350732336,24.310792928156,0 -53.80632492959,21.596091427229,0 -60.275155540275,19.431178988242,0 -66.857916881862,17.85450709485,0 -73.523615166014,16.895864329092,0 -80.233,16.574155175428,0 -86.942384833986,16.895864329092,0 -93.608083118138,17.85450709485,0 -100.19084445973,19.431178988242,0 -106.65967507041,21.596091427229,0 -112.99464926766,24.310792928156,0 -119.18867197945,27.530683702182,0 -125.24851794566,31.207446460313,0 -131.1957881683,35.291104487066,0 -137.06873202986,39.731526630365,0 -142.92637075221,44.479277149353,0 -148.85745460329,49.485711628857,0 -154.99954611037,54.702081886464,0 -161.58095211134,60.076948110119,0 -169.02023839539,65.549753389276,0 -178.19218679217,71.033328139514,0 -191.25532034016,76.356258412476,0 -214.47734930683,81.022254250305,0 -260.233,83.278155175428,0 </coordinates>
+      </LineString>
+    </Placemark>
+
+
   </Document>
   
   
