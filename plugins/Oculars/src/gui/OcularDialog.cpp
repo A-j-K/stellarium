@@ -295,7 +295,7 @@ void OcularDialog::createDialogContent()
 	connectIntProperty(ui->guiFontSizeSpinBox,		"Oculars.guiPanelFontSize");
 	connectBoolProperty(ui->checkBoxInitialFOV,		"Oculars.flagInitFOVUsage");
 	connectBoolProperty(ui->checkBoxInitialDirection,	"Oculars.flagInitDirectionUsage");
-	connectBoolProperty(ui->checkBoxResolutionCriterion,	"Oculars.flagShowResolutionCriterions");
+	connectBoolProperty(ui->checkBoxResolutionCriterion,	"Oculars.flagShowResolutionCriteria");
 	connectBoolProperty(ui->requireSelectionCheckBox,	"Oculars.flagRequireSelection");
 	connectBoolProperty(ui->limitStellarMagnitudeCheckBox,	"Oculars.flagLimitMagnitude");
 	connectBoolProperty(ui->hideGridsLinesCheckBox,		"Oculars.flagHideGridsLines");
@@ -312,6 +312,8 @@ void OcularDialog::createDialogContent()
 	connectBoolProperty(ui->contourCheckBox,		"Oculars.flagShowContour");
 	connectBoolProperty(ui->cardinalsCheckBox,		"Oculars.flagShowCardinals");
 	connectBoolProperty(ui->alignCrosshairCheckBox,		"Oculars.flagAlignCrosshair");
+	connectColorButton(ui->textColorToolButton,             "Oculars.textColor", "text_color", "Oculars");
+	connectColorButton(ui->lineColorToolButton,             "Oculars.lineColor", "line_color", "Oculars");
 
 	// The add & delete buttons
 	connect(ui->addCCD,          SIGNAL(clicked()), this, SLOT(insertNewCCD()));
@@ -535,9 +537,8 @@ void OcularDialog::initAboutText()
 	html += "</ul></p></body></html>";
 
 	StelGui* gui = dynamic_cast<StelGui*>(StelApp::getInstance().getGui());
-	Q_ASSERT(gui);
-	QString htmlStyleSheet(gui->getStelStyle().htmlStyleSheet);
-	ui->textBrowser->document()->setDefaultStyleSheet(htmlStyleSheet);
+	if (gui)
+		ui->textBrowser->document()->setDefaultStyleSheet(QString(gui->getStelStyle().htmlStyleSheet));
 
 	ui->textBrowser->setHtml(html);
 }
