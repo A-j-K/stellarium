@@ -4,6 +4,7 @@
 
 ## Sample location: 
 N 46°46'12.3" W 24°35'44.2"
+N 46.7701 W -24.5956
 
 ## Selected Nav stars and details
 
@@ -15,13 +16,13 @@ LMST +43  53.0
 SHA  +349 34.8
 GHA  +58   3.5
 DEC  +56  38.9
-GP   N56  38.9 W80.233  56.6483 -80.233
+GP   N56  38.9 W80.233  56.6483 -60.457
 LHA  +33  27.8
 LAT  N46  46.2
 LON  W24  35.7
 Hc   +67  20.0
 Zn   +308 7.9
-Distance 5683 km
+Distance 2665000 m
 
 Capella
 2020-02-08T19:20:25
@@ -31,13 +32,13 @@ LMST +43  53.0
 SHA  +280 27.0
 GHA  +348 55.6
 DEC  +46   1.0
-GP   N46   1.0 E11 4.4  46.4867, E11.0733
+GP   N46   1.0 E11 4.4  46.016, E 8.674
 LHA  +324 19.9
 LAT  N46  46.2
 LON  W24  35.7
 Hc   +65  36.0
 Zn   +78  35.1
-Distance: 5624km
+Distance: 2534000 m
 
 Hamal
 2020-02-08T19:20:25
@@ -47,13 +48,13 @@ LMST +43  53.0
 SHA  +327 55.1
 GHA  +36  23.8
 DEC  +23  33.5
-GP   N23  33.5 W58.57
+GP   N23  33.5 N 23.558 W -38.795
 LHA  +11  48.0
 LAT  N46  46.2
 LON  W24  35.7
 Hc   +64  55.8
 Zn   +206 15.4
-
+Distance: 2875000 m
 
 
 Polux
